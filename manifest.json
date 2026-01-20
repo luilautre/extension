@@ -1,17 +1,1 @@
-{
-  "manifest_version": 2,
-  "name": "extension",
-  "version": "1.0",
-
-  "description": "",
-
-  "icons": {
-    "48": "icons/border-48.png"
-  },
-
-  "content_scripts": [
-    {
-      "matches": ["*://*.mon-ent-occitanie.*/sg.do"],
-      "js": ["home.js"]
-    }]
-}
+{\n  "manifest_version": 2,\n  "name": "Timeline Modifier (Firefox)",\n  "version": "1.0",\n  "description": "Modifie l'affichage de la timeline des devoirs pour la rendre plus lisible (Firefox).",\n  "content_scripts": [\n    {\n      "matches": ["<all_urls>"],\n      "js": ["content/modify_timeline.js"],\n      "css": ["content/modify_timeline.css"],\n      "run_at": "document_idle"\n    }\n  ],\n  "permissions": [],\n  "applications": {\n    "gecko": {\n      "id": "timeline-modifier@example.com"\n    }\n  }\n}
