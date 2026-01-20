@@ -1,1 +1,20 @@
-{ "manifest_version": 2, "name": "Timeline Modifier (Firefox)", "version": "1.0", "description": "Modifie l'affichage de la timeline des devoirs pour la rendre plus lisible (Firefox).", "content_scripts": [ { "matches": [ "://.mon-ent-occitanie.fr/*" ], "js": [ "content/modify_timeline.js" ], "css": [ "content/modify_timeline.css" ], "run_at": "document_idle" } ], "permissions": [], "applications": { "gecko": { "id": "timeline-modifier@example.com" } } }
+{
+  "manifest_version": 2,
+  "name": "Timeline Modifier (Firefox)",
+  "version": "1.0",
+  "description": "Modifie l'affichage de la timeline des devoirs pour la rendre plus lisible (Firefox).",
+  "content_scripts": [
+    {
+      "matches": ["*://*.mon-ent-occitanie.fr/*"],
+      "js": ["content/modify_timeline.js"],
+      "css": ["content/modify_timeline.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [],
+  "applications": {
+    "gecko": {
+      "id": "timeline-modifier@example.com"
+    }
+  }
+}
