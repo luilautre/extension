@@ -1,20 +1,16 @@
 {
   "manifest_version": 2,
-  "name": "Timeline Modifier (Firefox)",
+  "name": "Devoirs perso ENT",
   "version": "1.0",
-  "description": "Modifie l'affichage de la timeline des devoirs pour la rendre plus lisible (Firefox).",
+  "description": "Ajoute des devoirs personnels depuis un XML.",
+  "permissions": ["storage"],
   "content_scripts": [
     {
       "matches": ["*://*.mon-ent-occitanie.fr/*"],
-      "js": ["content/modify_timeline.js"],
-      "css": ["content/modify_timeline.css"],
-      "run_at": "document_idle"
+      "js": ["content.js"]
     }
   ],
-  "permissions": [],
-  "applications": {
-    "gecko": {
-      "id": "timeline-modifier@example.com"
-    }
+  "browser_action": {
+    "default_popup": "popup.html"
   }
 }
