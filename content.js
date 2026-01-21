@@ -1,8 +1,8 @@
 const TODAY = new Date().toISOString().slice(0, 10);
 
 function waitForTimeline() {
-  const el = document.querySelector(".js-timeline__list");
-  if (el) init(el);
+  const timeline = document.querySelector(".js-timeline__list");
+  if (timeline) init(timeline);
   else setTimeout(waitForTimeline, 500);
 }
 
@@ -16,25 +16,35 @@ function init(timeline) {
   });
 }
 
+/* =========================
+   BANNIÈRE IMPORT XML
+   ========================= */
 function showBanner() {
   if (document.getElementById("devoirs-perso-banner")) return;
 
   const banner = document.createElement("div");
   banner.id = "devoirs-perso-banner";
   banner.innerHTML = `
-    📄 Importe ton fichier XML —
-    <span style="text-decoration:underline;cursor:pointer">glisser ici ou cliquer</span>
+    📄 Importer mes devoirs perso —
+    <span style="text-decoration:underline;cursor:pointer">
+      glisser le XML ici ou cliquer
+    </span>
     <input type="file" accept=".xml" hidden>
   `;
+
   banner.style.cssText = `
-    position:sticky;top:0;z-index:9999;
-    background:#fff3cd;padding:8px;
-    font-size:14px;border-bottom:1px solid #ccc;
+    position:sticky;
+    top:0;
+    z-index:9999;
+    background:#fff;
+    padding:8px 12px;
+    font-size:14px;
+    border-bottom:1px solid #ddd;
   `;
 
   const input = banner.querySelector("input");
+
   banner.onclick = () => input.click();
-  input.onchange = e => loadFile(e.target.files[0]);
 
   banner.ondragover = e => e.preventDefault();
   banner.ondrop = e => {
@@ -42,10 +52,14 @@ function showBanner() {
     loadFile(e.dataTransfer.files[0]);
   };
 
+  input.onchange = e => loadFile(e.target.files[0]);
+
   document.body.prepend(banner);
 }
 
 function loadFile(file) {
+  if (!file) return;
+
   const reader = new FileReader();
   reader.onload = () => {
     browser.storage.local.set({
@@ -56,6 +70,9 @@ function loadFile(file) {
   reader.readAsText(file);
 }
 
+/* =========================
+   INJECTION DES DEVOIRS
+   ========================= */
 function injectDevoirs(xmlString, timeline) {
   const parser = new DOMParser();
   const xml = parser.parseFromString(xmlString, "application/xml");
@@ -63,19 +80,18 @@ function injectDevoirs(xmlString, timeline) {
 
   if (!devoirs.length) return;
 
-  // bloc principal (copie structure ENT)
   const li = document.createElement("li");
   li.className = "timeline__list-item";
 
   li.innerHTML = `
-    <section class="panel panel--timeline">
-      <header class="panel__header">
-        <h3 class="panel__title">Mes devoirs perso</h3>
-      </header>
-      <div class="panel__content">
-        <ul class="taf__list"></ul>
+    <div class="timeline__item">
+      <h2 class="timeline__label">Mes devoirs perso</h2>
+      <div class="panel panel--timeline">
+        <div class="panel__content">
+          <ul class="taf__list"></ul>
+        </div>
       </div>
-    </section>
+    </div>
   `;
 
   const ul = li.querySelector(".taf__list");
@@ -84,27 +100,29 @@ function injectDevoirs(xmlString, timeline) {
     const item = document.createElement("li");
     item.className = "taf__item";
     item.innerHTML = `
-      <div class="taf__subject">${d.getAttribute("matière")}</div>
+      <div class="taf__subject">${d.getAttribute("matière") || ""}</div>
       <div class="taf__content">
-        <strong>${d.getAttribute("nom")}</strong>
-        <div class="taf__date">Pour ${d.getAttribute("date")}</div>
+        <p class="taf__text">
+          <strong>${d.getAttribute("nom") || ""}</strong>
+        </p>
+        <p class="taf__date">Pour ${d.getAttribute("date") || ""}</p>
       </div>
     `;
     ul.appendChild(item);
   });
 
-  // insertion ENTRE "Pour demain" et "Pour plus tard"
-  const items = [...timeline.children];
-  const tomorrow = items.find(el =>
-    el.textContent.includes("Pour demain")
+  /* insertion ENTRE "Pour demain" et "Pour plus tard" */
+  const items = [...timeline.querySelectorAll(".timeline__list-item")];
+
+  const indexDemain = items.findIndex(item =>
+    item.querySelector(".timeline__label")?.textContent.includes("Pour demain")
   );
 
-  if (tomorrow && tomorrow.nextSibling) {
-    timeline.insertBefore(li, tomorrow.nextSibling);
+  if (indexDemain !== -1 && items[indexDemain + 1]) {
+    timeline.insertBefore(li, items[indexDemain + 1]);
   } else {
     timeline.appendChild(li);
   }
 }
-
 
 waitForTimeline();
