@@ -61,18 +61,50 @@ function injectDevoirs(xmlString, timeline) {
   const xml = parser.parseFromString(xmlString, "application/xml");
   const devoirs = xml.querySelectorAll("devoir");
 
+  if (!devoirs.length) return;
+
+  // bloc principal (copie structure ENT)
   const li = document.createElement("li");
-  li.innerHTML = `<h3>Mes devoirs perso</h3><ul></ul>`;
-  const ul = li.querySelector("ul");
+  li.className = "timeline__list-item";
+
+  li.innerHTML = `
+    <section class="panel panel--timeline">
+      <header class="panel__header">
+        <h3 class="panel__title">Mes devoirs perso</h3>
+      </header>
+      <div class="panel__content">
+        <ul class="taf__list"></ul>
+      </div>
+    </section>
+  `;
+
+  const ul = li.querySelector(".taf__list");
 
   devoirs.forEach(d => {
     const item = document.createElement("li");
-    item.textContent =
-      `${d.getAttribute("nom")} — ${d.getAttribute("matière")} — ${d.getAttribute("date")}`;
+    item.className = "taf__item";
+    item.innerHTML = `
+      <div class="taf__subject">${d.getAttribute("matière")}</div>
+      <div class="taf__content">
+        <strong>${d.getAttribute("nom")}</strong>
+        <div class="taf__date">Pour ${d.getAttribute("date")}</div>
+      </div>
+    `;
     ul.appendChild(item);
   });
 
-  timeline.appendChild(li);
+  // insertion ENTRE "Pour demain" et "Pour plus tard"
+  const items = [...timeline.children];
+  const tomorrow = items.find(el =>
+    el.textContent.includes("Pour demain")
+  );
+
+  if (tomorrow && tomorrow.nextSibling) {
+    timeline.insertBefore(li, tomorrow.nextSibling);
+  } else {
+    timeline.appendChild(li);
+  }
 }
+
 
 waitForTimeline();
