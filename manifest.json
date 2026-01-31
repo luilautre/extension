@@ -6,7 +6,7 @@
   "permissions": ["storage"],
   "content_scripts": [
     {
-      "matches": ["*://*.mon-ent-occitanie.fr/*"],
+      "matches": ["<all_urls>"],
       "js": ["content.js"]
     }
   ],
