@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Devoirs perso ENT",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Ajoute des devoirs personnels depuis un XML.",
   "permissions": ["storage"],
   "content_scripts": [
