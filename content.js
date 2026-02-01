@@ -98,4 +98,8 @@ function injectDevoirs(xmlString, timeline) {
   }
 }
 
-waitForTimeline();
+browser.storage.local.get("config").then(({ config }) => {
+  if (!config) return
+  if (!config.hosts.includes(location.hostname)) return;
+  waitForTimeline();
+});
